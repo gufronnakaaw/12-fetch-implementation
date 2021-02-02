@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies DB</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="loading-spinner loading"></div>
+
+    <div class="container">
+        
+        <h1 class="my-4 text-center">Movies DB</h1>
+        <div class="row my-3 justify-content-center">
+            <div class="input-group mx-3">
+                <input type="text" class="form-control bg-light border-0 small input-search" placeholder="Search movie...">
+
+                <div class="input-group-append">
+                    <button class="btn btn-info btn-search" type="button">Search</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-movies justify-content-center"></div>
+
+    </div>
+    
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
