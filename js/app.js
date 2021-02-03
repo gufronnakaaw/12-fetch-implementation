@@ -1,129 +1,128 @@
-document.querySelector('.btn-search').addEventListener('click', function(){
+// author: @gufronnakaaw
+// date: 02-02-2021
 
-    const inputValue = document.querySelector('.input-search').value;
+const inputSearch = document.querySelector('.input-search');
 
-    if( inputValue === '' ){
-        alert('can not be empty!');
+document.querySelector('.btn-search').addEventListener('click', async function(){
+    
+    if( inputSearch.value === '' ){
+        showError('Error: Can not be empty!');
         return;
     }
 
-    document.querySelector('.loading').style.display = "inline-block";
+    try {
 
-    let url = `http://www.omdbapi.com/?apikey=bbea4df6&s=${inputValue}`;
+        const movies = await getMovies(inputSearch.value);
+        renderCards(movies);
 
-    fetch(url).finally(() => {
-        document.querySelector('.loading').style.display = "none";
-    }).then(response => response.json()).then(result => {
+    } catch(err){
+
+        console.log(err);
+        showError(err);
         
-        if( result.Response === "True" ) {
-            
-            let movies = result.Search;
-            let cards = '';
-    
-            movies.forEach( el => {
-                cards += `<div class="col-md-4 my-4" style="width: 18rem;">
-                            <div class="card">
-                                <img src="${el.Poster}" class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title">${el.Title}</h5>
-                                    <p class="card-text">${el.Year}</p>
-                                    <button class="btn btn-primary btn-show" data-omdbid="${el.imdbID}">Show Details</button>
-                                </div>
-                            </div>
-                        </div>`;    
-            });
-            
-            document.querySelector('.container .row-movies').innerHTML = cards;
-            
-            document.querySelectorAll('.btn-show').forEach(el => {
-                el.addEventListener('click', function(){
-                    const id = this.dataset.omdbid;
-    
-                    window.location.href = `show.html?id=${id}&search=${inputValue}`;
-                });
-            });
+    }
 
-        } else {
-
-            const alert = `
-            <div class="alert alert-danger mx-3 text-center" role="alert" style="width: 100%;">
-                ${result.Error}
-            </div>`;
-
-            document.querySelector('.container .row-movies').innerHTML = alert;
-
-        }
-
-    }).catch(err => {
-        const alert = `
-        <div class="alert alert-danger mx-3 text-center" role="alert" style="width: 100%;">
-            ${err}, please check your internet connection!
-        </div>`;
-
-        document.querySelector('.container .row-movies').innerHTML = alert;
-    });
-
-    document.querySelector('.input-search').value = '';
 });
 
+document.addEventListener('click', function(e) {
 
-const search = getUrlVars('search');
+    if( e.target.classList.contains('btn-show') ){
 
-if( search !== undefined ){
+        if( inputSearch.value !== '' ){
+            showDetails(e.target.dataset.omdbid, inputSearch.value);
+        } else {
+            showDetails(e.target.dataset.omdbid, localStorage.getItem('search'));
+        }
+        
+    }
+
+});
+
+window.onload = async function() {
+
+    if( localStorage.getItem('search') ){
+        
+        try {
+            
+            const movies = await getMovies(localStorage.getItem('search'));
+            renderCards(movies);
+
+        } catch (err) {
+
+            console.log(err);
+            showError(err);
+            
+        }
+
+    }
+    
+}
+
+
+// all function
+// get movies
+function getMovies(keyword) {
 
     document.querySelector('.loading').style.display = "inline-block";
 
-    let url = `http://www.omdbapi.com/?apikey=bbea4df6&s=${search}`;
+    let url = `http://www.omdbapi.com/?apikey=bbea4df6&s=${keyword}`;
 
-    fetch(url).finally(() => {
+    return fetch(url).finally(() => {
         document.querySelector('.loading').style.display = "none";
-    }).then(response => response.json()).then(result => {
+    })
+    .then(response => {
 
-        let movies = result.Search;
-        let cards = '';
+        if( response.status === 200 ){
+            return response.json();
+        } else {
+            throw new Error(response.statusText);
+        }
 
-        movies.forEach(el => {
-            cards += `<div class="col-md-4 my-4" style="width: 18rem;">
-                        <div class="card text-center">
-                            <img src="${el.Poster}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title">${el.Title}</h5>
-                                <p class="card-text">${el.Year}</p>
-                                <div class="text-center">
-                                    <button class="btn btn-primary btn-show" data-omdbid="${el.imdbID}">Show Details</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;    
-        });
-        
-        document.querySelector('.row-movies').innerHTML = cards;
-        
-        document.querySelectorAll('.btn-show').forEach(el => {
-            el.addEventListener('click', function(){
-                const id = this.dataset.omdbid;
+    })
+    .then(result => {
 
-                window.location.href = `show.html?id=${id}&search=${search}`;
-            });
-        });
+        if( result.Response === 'True' ){
+            return result.Search;
+        } else {
+            throw new Error(result.Error);
+        }
 
     });
+    
 }
 
-function getUrlVars(param = null) {
-	if( param !== null ) {
-		let vars = [], hash;
-        let hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-        
-		for( let i = 0; i < hashes.length; i++ ) {
-			hash = hashes[i].split('=');
-			vars.push(hash[0]);
-			vars[hash[0]] = hash[1];
-        }
-        
-        return vars[param];
-        
-    } else {
-		return null;
-	}
+// show details
+function showDetails(id, keyword) {
+    localStorage.setItem('search', keyword);
+    window.location.href = `show.html?id=${id}`;
+}
+
+// show cards
+function renderCards(movies) {
+
+    let cards = '';
+
+    movies.forEach(el => {
+        cards += `<div class="col-md-4 my-4" style="width: 18rem;">
+                    <div class="card">
+                        <img src="${el.Poster}" class="card-img-top" alt="${( el.Poster === 'N/A' ? el.Title : '')}">
+                        <div class="card-body">
+                            <h5 class="card-title">${el.Title}</h5>
+                            <p class="card-text">${el.Year}</p>
+                            <button class="btn btn-primary btn-show" data-omdbid="${el.imdbID}">Show Details</button>
+                        </div>
+                    </div>
+                </div>`;    
+    });
+    
+    document.querySelector('.container .row-movies').innerHTML = cards;
+}
+
+// show error
+function showError(error){
+
+    const alert = `<div class="alert alert-danger mx-3 text-center" role="alert" style="width: 100%;">${error}</div>`;
+
+    document.querySelector('.container .row-movies').innerHTML = alert;
+
 }
