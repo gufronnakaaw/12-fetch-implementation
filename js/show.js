@@ -31,7 +31,7 @@ function showError(error){
 function getMovieById(id) {
     
     document.querySelector('.loading').style.display = "inline-block";
-    let url = `http://www.omdbapi.com/?apikey=bbea4df6&i=${id}`;
+    let url = `https://www.omdbapi.com/?apikey=bbea4df6&i=${id}`;
 
     return fetch(url).finally(() => {
         document.querySelector('.loading').style.display = "none";

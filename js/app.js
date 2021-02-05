@@ -65,7 +65,7 @@ function getMovies(keyword) {
 
     document.querySelector('.loading').style.display = "inline-block";
 
-    let url = `http://www.omdbapi.com/?apikey=bbea4df6&s=${keyword}`;
+    let url = `https://www.omdbapi.com/?apikey=bbea4df6&s=${keyword}`;
 
     return fetch(url).finally(() => {
         document.querySelector('.loading').style.display = "none";
