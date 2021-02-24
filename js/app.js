@@ -31,7 +31,7 @@ document.addEventListener('click', function(e) {
         if( inputSearch.value !== '' ){
             showDetails(e.target.dataset.omdbid, inputSearch.value);
         } else {
-            showDetails(e.target.dataset.omdbid, localStorage.getItem('search'));
+            showDetails(e.target.dataset.omdbid, getWithExpiry('search'));
         }
         
     }
@@ -40,11 +40,11 @@ document.addEventListener('click', function(e) {
 
 window.onload = async function() {
 
-    if( localStorage.getItem('search') ){
+    if( getWithExpiry('search') ){
         
         try {
             
-            const movies = await getMovies(localStorage.getItem('search'));
+            const movies = await getMovies(getWithExpiry('search'));
             renderCards(movies);
 
         } catch (err) {
@@ -93,7 +93,7 @@ function getMovies(keyword) {
 
 // show details
 function showDetails(id, keyword) {
-    localStorage.setItem('search', keyword);
+    setWithExpiry('search', keyword, 50000);
     window.location.href = `show.html?id=${id}`;
 }
 
@@ -125,4 +125,30 @@ function showError(error){
 
     document.querySelector('.container .row-movies').innerHTML = alert;
 
+}
+
+// set expire local storage
+function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const item = {
+        value: value,
+        expiry: now.getTime() + ttl,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+}
+
+// get expire
+function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+    if (!itemStr) {
+        return null
+    }
+
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+    if (now.getTime() > item.expiry) {
+        localStorage.removeItem(key)
+        return null
+    }
+    return item.value
 }
