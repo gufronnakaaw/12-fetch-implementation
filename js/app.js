@@ -41,7 +41,8 @@ document.addEventListener('click', function(e) {
 window.onload = async function() {
 
     if( getWithExpiry('search') ){
-        
+        inputSearch.value = getWithExpiry('search');
+
         try {
             
             const movies = await getMovies(getWithExpiry('search'));
