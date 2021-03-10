@@ -30,11 +30,11 @@ function showError(error){
 // get movie by id
 function getMovieById(id) {
     
-    document.querySelector('.loading').style.display = "inline-block";
+    document.querySelector('.loader').style.display = "inline-block";
     let url = `https://www.omdbapi.com/?apikey=bbea4df6&i=${id}`;
 
     return fetch(url).finally(() => {
-        document.querySelector('.loading').style.display = "none";
+        document.querySelector('.loader').style.display = "none";
     }).then(response => {
 
         if( response.status === 200 ){

@@ -1,11 +1,12 @@
-.loading-spinner {
+.loader {
     width: 100px;
     height: 100px;
     display: none;
-    border: 5px solid green;
+    border: 5px solid teal;
     border-radius: 50%;
     border-top-color: white;
-    animation: 0.5s spin infinite ease;
+    border-bottom-color: white;
+    animation: 0.4s spin infinite linear;
     position: fixed;
     top: -100%; 
     right: -100%; 
@@ -16,7 +17,6 @@
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
