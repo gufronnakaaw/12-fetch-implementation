@@ -94,7 +94,7 @@ function getMovies(keyword) {
 
 // show details
 function showDetails(id, keyword) {
-    setWithExpiry('search', keyword, 50000);
+    setWithExpiry('search', keyword, 500000);
     window.location.href = `show.html?id=${id}`;
 }
 
@@ -106,7 +106,7 @@ function renderCards(movies) {
     movies.forEach(el => {
         cards += `<div class="col-md-4 my-4" style="width: 18rem;">
                     <div class="card">
-                        <img src="${el.Poster}" class="card-img-top" alt="${( el.Poster === 'N/A' ? el.Title : '')}">
+                        <img src="${el.Poster}" class="card-img-top" style="height: 70vh; object-fit: cover;" alt="${( el.Poster === 'N/A' ? el.Title : '')}">
                         <div class="card-body">
                             <h5 class="card-title">${el.Title}</h5>
                             <p class="card-text">${el.Year}</p>
