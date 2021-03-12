@@ -1,8 +1,8 @@
 .loader {
-    width: 100px;
-    height: 100px;
+    width: 55px;
+    height: 55px;
     display: none;
-    border: 5px solid teal;
+    border: 3px solid teal;
     border-radius: 50%;
     border-top-color: white;
     border-bottom-color: white;
